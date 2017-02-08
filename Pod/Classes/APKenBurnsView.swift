@@ -12,7 +12,7 @@ import QuartzCore
         Main data source method. Data source should provide next image.
         If no image provided (data source returns nil) then previous image will be used one more time.
     */
-    func nextImageForKenBurnsView(kenBurnsView: APKenBurnsView) -> UIImage?
+    func nextImageForKenBurnsView(_ kenBurnsView: APKenBurnsView) -> UIImage?
 }
 
 
@@ -21,23 +21,23 @@ import QuartzCore
     /*
         Called when transition starts from one image to another
     */
-    optional func kenBurnsViewDidStartTransition(kenBurnsView: APKenBurnsView, toImage: UIImage)
+    @objc optional func kenBurnsViewDidStartTransition(_ kenBurnsView: APKenBurnsView, toImage: UIImage)
 
     /*
         Called when transition from one image to another is finished
     */
-    optional func kenBurnsViewDidFinishTransition(kenBurnsView: APKenBurnsView)
+    @objc optional func kenBurnsViewDidFinishTransition(_ kenBurnsView: APKenBurnsView)
 }
 
 
 public enum APKenBurnsViewFaceRecognitionMode {
-    case None         // no face recognition, simple Ken Burns effect
-    case Biggest      // recognizes biggest face in image, if any then transition will start or will finish (chosen randomly) in center of face rect.
-    case Group        // recognizes all faces in image, if any then transition will start or will finish (chosen randomly) in center of compound rect of all faces.
+    case none         // no face recognition, simple Ken Burns effect
+    case biggest      // recognizes biggest face in image, if any then transition will start or will finish (chosen randomly) in center of face rect.
+    case group        // recognizes all faces in image, if any then transition will start or will finish (chosen randomly) in center of compound rect of all faces.
 }
 
 
-public class APKenBurnsView: UIView {
+open class APKenBurnsView: UIView {
 
     // MARK: - DataSource
 
@@ -45,7 +45,7 @@ public class APKenBurnsView: UIView {
         NOTE: Interface Builder does not support connecting to an outlet in a Swift file when the outlet’s type is a protocol.
         Workaround: Declare the outlet's type as AnyObject or NSObject, connect objects to the outlet using Interface Builder, then change the outlet's type back to the protocol.
     */
-    @IBOutlet public weak var dataSource: APKenBurnsViewDataSource?
+    @IBOutlet open weak var dataSource: APKenBurnsViewDataSource?
 
 
     // MARK: - Delegate
@@ -54,7 +54,7 @@ public class APKenBurnsView: UIView {
         NOTE: Interface Builder does not support connecting to an outlet in a Swift file when the outlet’s type is a protocol.
         Workaround: Declare the outlet's type as AnyObject or NSObject, connect objects to the outlet using Interface Builder, then change the outlet's type back to the protocol.
     */
-    @IBOutlet public weak var delegate: APKenBurnsViewDelegate?
+    @IBOutlet open weak var delegate: APKenBurnsViewDelegate?
 
 
     // MARK: - Animation Setup
@@ -62,7 +62,7 @@ public class APKenBurnsView: UIView {
     /*
         Face recognition mode. See APKenBurnsViewFaceRecognitionMode docs for more information.
     */
-    public var faceRecognitionMode: APKenBurnsViewFaceRecognitionMode = .None
+    open var faceRecognitionMode: APKenBurnsViewFaceRecognitionMode = .none
 
     /*
         Allowed deviation of scale factor.
@@ -70,12 +70,12 @@ public class APKenBurnsView: UIView {
         Example: If scaleFactorDeviation = 0.5 then allowed scale will be from 1.0 to 1.5.
         If scaleFactorDeviation = 0.0 then allowed scale will be from 1.0 to 1.0 - fixed scale factor.
     */
-    @IBInspectable public var scaleFactorDeviation: Float = 1.0
+    @IBInspectable open var scaleFactorDeviation: Float = 1.0
 
     /*
         Animation duration of one image
     */
-    @IBInspectable public var imageAnimationDuration: Double = 10.0
+    @IBInspectable open var imageAnimationDuration: Double = 10.0
 
     /*
         Allowed deviation of animation duration of one image
@@ -83,22 +83,22 @@ public class APKenBurnsView: UIView {
         Example: if imageAnimationDuration = 10 seconds and imageAnimationDurationDeviation = 2 seconds then
         resulting image animation duration will be from 8 to 12 seconds
     */
-    @IBInspectable public var imageAnimationDurationDeviation: Double = 0.0
+    @IBInspectable open var imageAnimationDurationDeviation: Double = 0.0
 
     /*
         Duration of transition animation between images
     */
-    @IBInspectable public var transitionAnimationDuration: Double = 4.0
+    @IBInspectable open var transitionAnimationDuration: Double = 4.0
 
     /*
         Allowed deviation of animation duration of one image
     */
-    @IBInspectable public var transitionAnimationDurationDeviation: Double = 0.0
+    @IBInspectable open var transitionAnimationDurationDeviation: Double = 0.0
 
     /*
         If set to true then recognized faces will be shown as rectangles. Only applicable for debugging.
     */
-    @IBInspectable public var showFaceRectangles: Bool = false
+    @IBInspectable open var showFaceRectangles: Bool = false
 
 
     // MARK: - Init
@@ -116,7 +116,7 @@ public class APKenBurnsView: UIView {
 
     // MARK: - Public
 
-    public func startAnimations() {
+    open func startAnimations() {
         stopAnimations()
 
         animationDataSource = buildAnimationDataSource()
@@ -130,7 +130,7 @@ public class APKenBurnsView: UIView {
         startTransitionWithImage(image!, imageView: firstImageView, nextImageView: secondImageView)
     }
 
-    public func pauseAnimations() {
+    open func pauseAnimations() {
         firstImageView.backupAnimations()
         secondImageView.backupAnimations()
 
@@ -138,7 +138,7 @@ public class APKenBurnsView: UIView {
         layer.pauseAnimations()
     }
 
-    public func resumeAnimations() {
+    open func resumeAnimations() {
         firstImageView.restoreAnimations()
         secondImageView.restoreAnimations()
 
@@ -146,7 +146,7 @@ public class APKenBurnsView: UIView {
         layer.resumeAnimations()
     }
 
-    public func stopAnimations() {
+    open func stopAnimations() {
         timer?.cancel()
         layer.removeAllAnimations()
     }
@@ -154,21 +154,21 @@ public class APKenBurnsView: UIView {
 
     // MARK: - Private Variables
 
-    private var firstImageView: UIImageView!
-    private var secondImageView: UIImageView!
+    fileprivate var firstImageView: UIImageView!
+    fileprivate var secondImageView: UIImageView!
 
-    private var animationDataSource: AnimationDataSource!
-    private var facesDrawer: FacesDrawerProtocol!
+    fileprivate var animationDataSource: AnimationDataSource!
+    fileprivate var facesDrawer: FacesDrawerProtocol!
 
-    private let notificationCenter = NSNotificationCenter.defaultCenter()
+    fileprivate let notificationCenter = NotificationCenter.default
 
-    private var timer: BlockTimer?
-    private var stopWatch: StopWatch!
+    fileprivate var timer: BlockTimer?
+    fileprivate var stopWatch: StopWatch!
 
 
     // MARK: - Setup
 
-    private func setup() {
+    fileprivate func setup() {
         firstImageView = buildDefaultImageView()
         secondImageView = buildDefaultImageView()
         facesDrawer = FacesDrawer()
@@ -177,15 +177,15 @@ public class APKenBurnsView: UIView {
 
     // MARK: - Lifecycle
 
-    public override func didMoveToSuperview() {
+    open override func didMoveToSuperview() {
         guard superview == nil else {
             notificationCenter.addObserver(self,
                                            selector: #selector(applicationWillResignActive),
-                                           name: UIApplicationWillResignActiveNotification,
+                                           name: NSNotification.Name.UIApplicationWillResignActive,
                                            object: nil)
             notificationCenter.addObserver(self,
                                            selector: #selector(applicationDidBecomeActive),
-                                           name: UIApplicationDidBecomeActiveNotification,
+                                           name: NSNotification.Name.UIApplicationDidBecomeActive,
                                            object: nil)
             return
         }
@@ -202,31 +202,31 @@ public class APKenBurnsView: UIView {
 
     // MARK: - Notifications
 
-    @objc private func applicationWillResignActive(notification: NSNotification) {
+    @objc fileprivate func applicationWillResignActive(_ notification: Notification) {
         pauseAnimations()
     }
 
-    @objc private func applicationDidBecomeActive(notification: NSNotification) {
+    @objc fileprivate func applicationDidBecomeActive(_ notification: Notification) {
         resumeAnimations()
     }
 
 
     // MARK: - Timer
 
-    private func startTimerWithDelay(delay: Double, callback: () -> ()) {
+    fileprivate func startTimerWithDelay(_ delay: Double, callback: @escaping () -> ()) {
         stopTimer()
 
         timer = BlockTimer(interval: delay, callback: callback)
     }
 
-    private func stopTimer() {
+    fileprivate func stopTimer() {
         timer?.cancel()
     }
 
 
     // MARK: - Private
 
-    private func buildAnimationDataSource() -> AnimationDataSource {
+    fileprivate func buildAnimationDataSource() -> AnimationDataSource {
         let animationDependencies = ImageAnimationDependencies(scaleFactorDeviation: scaleFactorDeviation,
                                                                imageAnimationDuration: imageAnimationDuration,
                                                                imageAnimationDurationDeviation: imageAnimationDurationDeviation)
@@ -235,17 +235,17 @@ public class APKenBurnsView: UIView {
         return animationDataSourceFactory.buildAnimationDataSource()
     }
 
-    private func startTransitionWithImage(image: UIImage, imageView: UIImageView, nextImageView: UIImageView) {
+    fileprivate func startTransitionWithImage(_ image: UIImage, imageView: UIImageView, nextImageView: UIImageView) {
         guard isValidAnimationDurations() else {
             fatalError("Animation durations setup is invalid!")
         }
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async {
             self.stopWatch.start()
 
             var animation = self.animationDataSource.buildAnimationForImage(image, forViewPortSize: self.bounds.size)
 
-            dispatch_async(dispatch_get_main_queue()) {
+            DispatchQueue.main.async {
 
                 let animationTimeCompensation = self.stopWatch.duration
                 animation = ImageAnimation(startState: animation.startState,
@@ -282,10 +282,10 @@ public class APKenBurnsView: UIView {
         }
     }
 
-    private func animateTransitionWithDuration(duration: Double, imageView: UIImageView, nextImageView: UIImageView, completion: () -> ()) {
-        UIView.animateWithDuration(duration,
+    fileprivate func animateTransitionWithDuration(_ duration: Double, imageView: UIImageView, nextImageView: UIImageView, completion: @escaping () -> ()) {
+        UIView.animate(withDuration: duration,
                                    delay: 0.0,
-                                   options: UIViewAnimationOptions.CurveEaseInOut,
+                                   options: UIViewAnimationOptions(),
                                    animations: {
                                        imageView.alpha = 0.0
                                        nextImageView.alpha = 1.0
@@ -297,7 +297,7 @@ public class APKenBurnsView: UIView {
                                    })
     }
 
-    private func buildAnimationDuration() -> Double {
+    fileprivate func buildAnimationDuration() -> Double {
         var durationDeviation = 0.0
         if transitionAnimationDurationDeviation > 0.0 {
             durationDeviation = RandomGenerator().randomDouble(min: -transitionAnimationDurationDeviation,
@@ -307,15 +307,15 @@ public class APKenBurnsView: UIView {
         return duration
     }
 
-    private func isValidAnimationDurations() -> Bool {
+    fileprivate func isValidAnimationDurations() -> Bool {
         return imageAnimationDuration - imageAnimationDurationDeviation -
                (transitionAnimationDuration - transitionAnimationDurationDeviation) / 2 > 0.0
     }
 
-    private func buildDefaultImageView() -> UIImageView {
+    fileprivate func buildDefaultImageView() -> UIImageView {
         let imageView = UIImageView(frame: bounds)
-        imageView.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
-        imageView.contentMode = UIViewContentMode.Center
+        imageView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        imageView.contentMode = UIViewContentMode.center
         self.addSubview(imageView)
 
         return imageView

@@ -14,6 +14,7 @@ APKenBurnsView is UIView subclass which supports face recognition to beautifully
 
 ![APKenBurnsView](/images/demo.gif)
 
+## Updated to Swift 3.0
 
 ## Features
 * Face recognition feature to beautifully animate people photos. 

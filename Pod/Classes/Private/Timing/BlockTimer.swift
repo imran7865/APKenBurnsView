@@ -8,14 +8,14 @@ class BlockTimer {
 
     // MARK: - Private Variables
 
-    private let repeats: Bool
-    private var timer: NSTimer?
-    private var callback: (() -> ())? // callback is retained, but cancel() will drop it and therefore break retain cycle
-    private var timeLeftToFire: NSTimeInterval?
+    fileprivate let repeats: Bool
+    fileprivate var timer: Timer?
+    fileprivate var callback: (() -> ())? // callback is retained, but cancel() will drop it and therefore break retain cycle
+    fileprivate var timeLeftToFire: TimeInterval?
 
     // MARK: - Init
 
-    init(interval: NSTimeInterval, repeats: Bool = false, callback: () -> ()) {
+    init(interval: TimeInterval, repeats: Bool = false, callback: @escaping () -> ()) {
         self.repeats = repeats
         self.callback = callback
 
@@ -45,7 +45,7 @@ class BlockTimer {
         callback = nil
     }
 
-    @objc func timerFired(timer: NSTimer) {
+    @objc func timerFired(_ timer: Timer) {
         callback?()
 
         if !repeats {
@@ -55,14 +55,14 @@ class BlockTimer {
 
     // MARK: - Private
 
-    private func buildTimerAndScheduleWithTimeInterval(timeInterval: NSTimeInterval, repeats: Bool) -> NSTimer {
-        let timer = NSTimer(timeInterval: timeInterval,
+    fileprivate func buildTimerAndScheduleWithTimeInterval(_ timeInterval: TimeInterval, repeats: Bool) -> Timer {
+        let timer = Timer(timeInterval: timeInterval,
                             target: self,
                             selector: #selector(timerFired),
                             userInfo: nil,
                             repeats: repeats)
 
-        NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+        RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
 
         return timer
     }

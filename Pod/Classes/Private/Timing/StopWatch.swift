@@ -9,8 +9,8 @@ class StopWatch: CustomStringConvertible {
 
     // MARK: - Public Variables
 
-    private var startTime: Double = 0.0
-    private var finishTime: Double = 0.0
+    fileprivate var startTime: Double = 0.0
+    fileprivate var finishTime: Double = 0.0
 
     var duration: Double {
         get {

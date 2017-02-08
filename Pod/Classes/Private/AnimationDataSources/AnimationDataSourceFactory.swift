@@ -29,7 +29,7 @@ class AnimationDataSourceFactory: AnimationDataSourceFactoryProtocol {
     // MARK: - Public
 
     func buildAnimationDataSource() -> AnimationDataSource {
-        if faceRecognitionMode == .None {
+        if faceRecognitionMode == .none {
             return DefaultAnimationDataSource(animationDependencies: animationDependencies)
         } else {
             let mode = FaceRecognitionMode(mode: faceRecognitionMode)

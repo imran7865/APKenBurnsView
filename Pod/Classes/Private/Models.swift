@@ -6,13 +6,13 @@ import Foundation
 
 
 enum TransitionEffect {
-    case TransitionEffectCrossFade
+    case transitionEffectCrossFade
 }
 
 struct Transition {
     let imageTransition: ImageAnimation
 
-    let transitionEffect: TransitionEffect = .TransitionEffectCrossFade
+    let transitionEffect: TransitionEffect = .transitionEffectCrossFade
     let transitionDuration: Double
 }
 

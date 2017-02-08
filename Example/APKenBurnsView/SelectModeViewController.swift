@@ -11,7 +11,7 @@ class SelectModeViewController: UITableViewController {
 
     // MARK: - Private Variables
 
-    private var dataSource: [String]!
+    fileprivate var dataSource: [String]!
 
     // MARK: - Lifecycle
 
@@ -21,8 +21,8 @@ class SelectModeViewController: UITableViewController {
         dataSource = ["family1", "family2", "nature1", "nature2"]
     }
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        super.prepareForSegue(segue, sender: sender)
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
 
         var faceRecognitionMode: APKenBurnsViewFaceRecognitionMode = .None
         if segue.identifier == "Biggest" {
@@ -31,7 +31,7 @@ class SelectModeViewController: UITableViewController {
         if segue.identifier == "Group" {
             faceRecognitionMode = .Group
         }
-        let destination = segue.destinationViewController as! KenBurnsViewController
+        let destination = segue.destination as! KenBurnsViewController
         destination.faceRecoginitionMode = faceRecognitionMode
         destination.dataSource = dataSource
     }
